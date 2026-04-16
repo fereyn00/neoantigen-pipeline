@@ -8,8 +8,6 @@ This pipeline processes somatic and germline mutations to identify and rank neoa
 3. **Tool Integration**: Integrates results from `NetChop` (cleavage) and `NetMHCpan` (binding).
 4. **Scoring**: Ranks candidates using a hyperbolic tangent weighted scoring system.
 
-## Usage
-1. Place your cohort data in the `data/` folder.
-2. Run the master pipeline:
-   ```bash
-   python main.py --sample_id PATIENT_001
+## Run
+```bash
+python -m src.pipeline.run_pipeline
