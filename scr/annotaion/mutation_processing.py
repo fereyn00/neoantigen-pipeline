@@ -1,69 +1,4 @@
 import os
-import pandas as pd
-from bioreactor.cohort_data import *
-from bioreactor.mutations import *
-
-
-def remove_duplicate_positions_keep_highest_AF(df):
-    if "gnomADg_AF" not in df.columns:
-        return df.drop_duplicates(subset=["Protein_position"], keep="first")
-    return (
-        df.sort_values(by="gnomADg_AF", ascending=False)
-          .drop_duplicates(subset=["Protein_position"], keep="first")
-          .sort_values(by="Protein_position")
-    )
-
-
-def collapse_mutations(muts):
-    """
-    muts: list of (pos, amino_acids, vaf)
-    keeps first mutation per position, sorts by position
-    """
-    seen = {}
-    for pos, aa, vaf in muts:
-        if pos not in seen:
-            seen[pos] = (aa, vaf)
-    collapsed = [(pos, aa, vaf) for pos, (aa, vaf) in seen.items()]
-    collapsed.sort(key=lambda x: x[0])
-    return collapsed
-
-
-def process_sample_mutations(sample_id, dna_protein_affecting_mutations, output_dir="results"):
-
-    cohort = dS3Cohort(
-        bucket='patients-data',
-        cohort_id='Early_Adopters',
-        patients=[sample_id]
-    )
-
-    def filter_mutations(df):
-        return df[
-            (df["LDT_PASS"] == 'PASS') &
-            (df["Variant_Classification"].isin(dna_protein_affecting_mutations)) &
-            (df["Variant_Classification"].isin([
-                'In_Frame_Ins',
-                'In_Frame_Del',
-                'Missense_Mutation'
-            ]))
-        ].copy()
-
-    gmaf = filter_mutations(cohort.gmaf)
-    maf = filter_mutations(cohort.maf)
-
-    results = []
-    grouped = maf.groupby(["Sample", "Hugo_Symbol", "Transcript_ID"])
-
-    for (sample_id, gene, transcript_id), tumor_group in grouped:
-        try:
-            ref_seq = get_protein_sequence(transcript_id)
-            aligned_germline_seq = ref_seq
-            aligned_tumor_seq = ref_seq
-
-            germline_mutations = gmaf[
-                (gmaf["Sample"] == sample_id) &
-                (gmaf["Hugo_Symbol"] == gene) &
-                (gmaf["Transcript_ID"] == transcript_id)
-            ]
             germline_mutations = remove_duplicate_positions_keep_highest_AF(germline_mutations)
             tumor_mutations_df = remove_duplicate_positions_keep_highest_AF(tumor_group)
 
@@ -81,4 +16,69 @@ def process_sample_mutations(sample_id, dna_protein_affecting_mutations, output_
             tumor_out = []
 
             for mut_type in ["missense", "deletions", "insertions"]:
+                for _, row in gm[mut_type].iterrows():
+                    pos = normalize_position(row["Protein_position"])
+                    if pos is None or pd.isna(row["Amino_acids"]) or '/' not in row["Amino_acids"]:
+                        continue
+
+                    ref_aa, alt_aa = row["Amino_acids"].split('/')
+                    ref_seq_aa = ref_seq[pos - 1:pos - 1 + len(ref_aa)]
+
+                    if ref_aa != '-' and ref_aa != ref_seq_aa:
+                        continue
+
+                    germline_out.append((pos, row["Amino_acids"], row["Tumor_VAF"]))
+
+                    try:
+                        aligned_germline_seq, _ = apply_mutation_with_alignment(
+                            aligned_germline_seq, pos, ref_aa, alt_aa
+                        )
+                        aligned_tumor_seq = aligned_germline_seq
+                    except ValueError:
+                        continue
+
+                for _, row in tm[mut_type].iterrows():
+                    pos = normalize_position(row["Protein_position"])
+                    if pos is None or pd.isna(row["Amino_acids"]) or '/' not in row["Amino_acids"]:
+                        continue
+
+                    ref_aa, alt_aa = row["Amino_acids"].split('/')
+                    tumor_out.append((pos, row["Amino_acids"], row["Tumor_VAF"]))
+
+                    try:
+                        aligned_tumor_seq, _ = apply_mutation_with_alignment(
+                            aligned_tumor_seq, pos, ref_aa, alt_aa
+                        )
+                        if mut_type == "insertions" and len(alt_aa) > len(ref_aa):
+                            aligned_germline_seq = (
+                                aligned_germline_seq[:pos - 1]
+                                + '-' * (len(alt_aa) - len(ref_aa))
+                                + aligned_germline_seq[pos - 1:]
+                            )
+                    except ValueError:
+                        continue
+
+            germline_collapsed = collapse_mutations(germline_out)
+            tumor_collapsed = collapse_mutations(tumor_out)
+
+            results.append({
+                "Sample": sample_id,
+                "Gene": gene,
+                "Transcript_ID": transcript_id,
+                "Germline_Mutated_Amino_Acids": ",".join(a for _, a, _ in germline_collapsed),
+                "Germline_Positions": ",".join(str(p) for p, _, _ in germline_collapsed),
+                "Germline_VAF": ",".join(str(v) for _, _, v in germline_collapsed),
+                "Tumor_Mutated_Amino_Acids": ",".join(a for _, a, _ in tumor_collapsed),
+                "Tumor_Positions": ",".join(str(p) for p, _, _ in tumor_collapsed),
+                "Tumor_VAF": ",".join(str(v) for _, _, v in tumor_collapsed),
+                "Germline_Protein": aligned_germline_seq,
+                "Tumor_Protein": aligned_tumor_seq
+            })
+
+        except Exception as e:
+            print(f"Ошибка для {sample_id}, {gene}, {transcript_id}: {e}")
+
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, f"{sample_id}_transcripts.csv")
+    pd.DataFrame(results).to_csv(output_path, index=False)
     print(f"Result saved: {output_path}")
