@@ -1,8 +1,8 @@
 # /opt/netMHCpan-4.2/Linux_aarch64/bin/netMHCpan-4.2 -p PT1_peptides.txt -BA -a HLA-A01:01,HLA-B08:01,HLA-B18:01 -xls -xlsfile PT1.xls
-# Wed Apr 29 11:53:17 2026
+# Wed Apr 29 12:44:13 2026
 # User: root
-# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/a5/1b3e5244722ebdb715eefd1ff4616b
-# Host: Linux bdc36c55753d 6.12.54-linuxkit aarch64
+# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/02/691584173c79f328f644cbe68bc975
+# Host: Linux 25a39a5e7b53 6.12.54-linuxkit aarch64
 # -p       1                    Use peptide input
 # -BA      1                    Include Binding affinity prediction
 # -a       HLA-A01:01,HLA-B08:01,HLA-B18:01 Allele for prediction (multiple alleles with ,)
@@ -39,7 +39,7 @@
 
 # NetMHCpan version 4.2b
 
-# Tmpdir made /tmp/netMHCpan_OIpUG0
+# Tmpdir made /tmp/netMHCpan_5TZFrW
 
 # Input is in PEPTIDE format
 

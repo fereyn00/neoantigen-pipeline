@@ -20,3 +20,18 @@ process NETCHOP {
     netChop ${fasta} -t 0.5 -v 0 > netchop.txt
     """
 }
+
+process MAKE_FASTA {
+
+    input:
+    tuple val(sample), val(type), val(enst), val(seq)
+
+    output:
+    tuple val(sample), val(type), val(enst), path("${enst}.fasta")
+
+    script:
+    """
+    echo ">${enst}" > ${enst}.fasta
+    echo "${seq}" >> ${enst}.fasta
+    """
+}

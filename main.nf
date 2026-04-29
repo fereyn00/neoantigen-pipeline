@@ -1,18 +1,10 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
-include { NETCHOP } from './modules/netchop.nf'
+include { MAKE_FASTA; NETCHOP } from './modules/netchop.nf'
 include { NETMHCPAN } from './modules/netmhcpan.nf'
 
-THRESHOLD = 0.5
-
 workflow {
-
-    /*
-     * =========================
-     *  NETCHOP BRANCH
-     * =========================
-     */
 
     fasta_files = Channel.fromPath("data/netchop_input/*.fasta")
 
@@ -48,23 +40,12 @@ workflow {
             }
         }
 
-        return results
+        results
     }
 
-    fasta_ch = transcripts.map { sample, type, enst, seq ->
-        def f = file("${sample}_${type}_${enst}.fasta")
-        f.text = ">${enst}\n${seq}"
-        tuple(sample, type, enst, f)
-    }
-
+    fasta_ch = transcripts | MAKE_FASTA
     netchop_out = fasta_ch | NETCHOP
 
-
-    /*
-     * =========================
-     *  NETMHCPAN BRANCH
-     * =========================
-     */
 
     peptides = Channel.fromPath("data/netmhcpan_input/*_peptides.txt")
 
@@ -75,12 +56,4 @@ workflow {
             tuple(id, pep, hla)
         }
         | NETMHCPAN
-
-
-    /*
-     * =========================
-     *  OPTIONAL: join both streams (if needed later)
-     * =========================
-     */
-
 }

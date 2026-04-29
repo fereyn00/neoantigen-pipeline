@@ -1,8 +1,8 @@
-# netChop PT1_tumor_tumor_ENST00000262189.fasta -t 0.5 -v 0
-# Wed Apr 29 11:54:02 2026
+# netChop ENST00000262189.fasta -t 0.5 -v 0
+# Wed Apr 29 12:44:59 2026
 # User: unknown
-# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/01/a6037111a469bf3a15adef68e45a90
-# Host: Linux 3fe89a56eb3d 6.12.54-linuxkit x86_64
+# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/6a/b063a0101c1dc4b52b74bdb436f3f1
+# Host: Linux 51d1e112dac7 6.12.54-linuxkit x86_64
 # -t       0.500000             Threshold for assigned cleavage site
 # -v       0                    [0] Cterm3.0 [1] 20S-3.0
 # Command line parameters set to:
@@ -14,7 +14,7 @@
 #	[-tdir filename]     /tmp/netChopXXXXXX   Temporary directory (made with mkdtemp)
 #	[-dirty]             0                    Dirty model, keep temp files
 #	[-ostrict]           0                    Turn off strict mode
-# Tmpdir made /tmp/netChopneyHZN
+# Tmpdir made /tmp/netChopTEW9Yo
 NetChop 3.0 predictions using version C-term. Threshold 0.500000
 
 --------------------------------------
@@ -741,23 +741,23 @@ NetChop 3.0 predictions using version C-term. Threshold 0.500000
  719   R  .   0.470688 ENST000002
  720   L  S   0.960609 ENST000002
  721   Q  .   0.030641 ENST000002
- 722   G  .   0.120182 ENST000002
- 723   E  .   0.028322 ENST000002
- 724   K  S   0.759838 ENST000002
- 725   E  .   0.025187 ENST000002
- 726   Q  .   0.223054 ENST000002
- 727   K  S   0.906135 ENST000002
- 728   E  .   0.040430 ENST000002
- 729   N  .   0.025406 ENST000002
- 730   A  .   0.459479 ENST000002
- 731   E  .   0.024490 ENST000002
- 732   L  S   0.951271 ENST000002
- 733   S  .   0.029939 ENST000002
- 734   T  .   0.038073 ENST000002
- 735   G  .   0.124893 ENST000002
- 736   L  S   0.894027 ENST000002
- 737   M  S   0.705825 ENST000002
- 738   D  .   0.035296 ENST000002
+ 722   G  .   0.135210 ENST000002
+ 723   E  .   0.029564 ENST000002
+ 724   K  S   0.861706 ENST000002
+ 725   E  .   0.026409 ENST000002
+ 726   Q  .   0.378429 ENST000002
+ 727   K  S   0.936676 ENST000002
+ 728   E  .   0.041111 ENST000002
+ 729   N  .   0.025881 ENST000002
+ 730   S  .   0.046763 ENST000002
+ 731   E  .   0.026496 ENST000002
+ 732   L  S   0.950289 ENST000002
+ 733   S  .   0.046353 ENST000002
+ 734   T  .   0.034049 ENST000002
+ 735   G  .   0.167748 ENST000002
+ 736   L  S   0.932758 ENST000002
+ 737   M  S   0.671645 ENST000002
+ 738   D  .   0.039916 ENST000002
  739   S  .   0.171737 ENST000002
  740   E  .   0.025704 ENST000002
  741   M  .   0.361887 ENST000002
@@ -1106,23 +1106,23 @@ NetChop 3.0 predictions using version C-term. Threshold 0.500000
 1084   L  S   0.931271 ENST000002
 1085   S  .   0.026464 ENST000002
 1086   S  .   0.028193 ENST000002
-1087   C  .   0.029491 ENST000002
-1088   P  .   0.023109 ENST000002
-1089   V  .   0.413664 ENST000002
-1090   C  .   0.030221 ENST000002
-1091   Y  S   0.951115 ENST000002
-1092   R  S   0.562937 ENST000002
-1093   N  .   0.102363 ENST000002
-1094   Y  .   0.256582 ENST000002
-1095   R  S   0.888478 ENST000002
-1096   E  .   0.022882 ENST000002
-1097   E  .   0.023353 ENST000002
-1098   D  .   0.033617 ENST000002
-1099   L  .   0.461848 ENST000002
-1100   I  .   0.113404 ENST000002
-1101   L  S   0.921804 ENST000002
-1102   Q  .   0.294521 ENST000002
-1103   C  .   0.132287 ENST000002
+1087   C  .   0.032178 ENST000002
+1088   P  .   0.023467 ENST000002
+1089   V  S   0.595182 ENST000002
+1090   C  .   0.027404 ENST000002
+1091   Y  S   0.953640 ENST000002
+1092   R  S   0.684814 ENST000002
+1093   N  .   0.091118 ENST000002
+1094   Y  .   0.262093 ENST000002
+1095   S  .   0.184594 ENST000002
+1096   E  .   0.022977 ENST000002
+1097   E  .   0.024279 ENST000002
+1098   D  .   0.053412 ENST000002
+1099   L  .   0.459294 ENST000002
+1100   I  .   0.111832 ENST000002
+1101   L  S   0.943123 ENST000002
+1102   Q  .   0.086547 ENST000002
+1103   C  .   0.158829 ENST000002
 1104   R  S   0.869414 ENST000002
 1105   Q  .   0.048921 ENST000002
 1106   C  .   0.029781 ENST000002
