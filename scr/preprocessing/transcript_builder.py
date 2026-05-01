@@ -1,7 +1,6 @@
 import os
 
 import pandas as pd
-
 from preprocessing.api import get_protein_sequence
 from preprocessing.utils import (
     apply_mutation_with_alignment,
@@ -68,11 +67,9 @@ def process_sample_mutations(sample_id, maf, output_dir="neoantigen_candid_from_
         except Exception as e:
             print(f"Transcript error {sample_id}, {gene}, {transcript_id}: {e}")
 
-    os.makedirs(output_dir, exist_ok=True)
-
     df_result = pd.DataFrame(results).drop_duplicates()
 
-    output_path = os.path.join(output_dir, f"{sample_id}_transcripts.csv")
+    output_path = f"{sample_id}_transcripts.csv"
     df_result.to_csv(output_path, index=False)
 
     return output_path

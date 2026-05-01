@@ -3,6 +3,7 @@ process NETMHCPAN {
     tag "${sample_id}"
 
     container 'netmhcpan_image:latest'
+    containerOptions '--platform linux/amd64'
 
     publishDir "data/netmhcpan_output", mode: 'copy'
 

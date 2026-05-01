@@ -2,16 +2,13 @@
 nextflow.enable.dsl=2
 
 
-// -----------------------------
-// Neoantigen transcript builder
-// -----------------------------
+// =====================================================
+// MODULES
+// =====================================================
 include { BUILD_TRANSCRIPTS } from './modules/build_transcripts.nf'
 include { GENERATE_PEPTIDES } from './modules/build_peptides.nf'
+include { BUILD_PEPTIDE_TXT } from './modules/build_peptide_txt.nf'
 
-
-// -----------------------------
-// Existing modules
-// -----------------------------
 include { MAKE_FASTA; NETCHOP } from './modules/netchop.nf'
 include { NETMHCPAN } from './modules/netmhcpan.nf'
 
@@ -19,81 +16,61 @@ include { NETMHCPAN } from './modules/netmhcpan.nf'
 workflow {
 
     // =====================================================
-    // 🧬 MAF INPUT
+    // 🧬 INPUT MAF FILES
     // =====================================================
     maf_files = Channel.fromPath("data/mafs/*.csv")
-        .map { file ->
-            tuple(file.baseName, file)
+        .map { f ->
+            tuple(f.baseName, f)
         }
 
-    maf_files.view { println "MAF input: $it" }
-
-
-    // =====================================================
-    // 🧬 STEP 1: TRANSCRIPTS
-    // =====================================================
     transcripts = maf_files | BUILD_TRANSCRIPTS
 
 
     // =====================================================
-    // 🧬 STEP 2: PEPTIDES (FIXED — YOU MISSED THIS)
+    // 🧬 BRANCH 1: NETCHOP (FIXED)
     // =====================================================
-    peptides = transcripts | GENERATE_PEPTIDES
+    // transcripts MUST already contain:
+    // sample, type, enst, sequence
 
-
-    // =====================================================
-    // 🧬 EXISTING PIPELINE
-    // =====================================================
-
-    fasta_files = Channel.fromPath("data/netchop_input/*.fasta")
-
-    transcripts_fasta = fasta_files.flatMap { file ->
-
-        def results = []
-        def sample = file.baseName
-        def type = sample.contains("tumor") ? "tumor" : "germline"
-
-        def enst = null
-        def seq = ""
-
-        file.withReader { r ->
-            r.eachLine { line ->
-
-                if (line.startsWith(">")) {
-
-                    if (enst != null) {
-                        results << tuple(sample, type, enst, seq)
-                    }
-
-                    def parts = line.split("\\|")
-                    enst = parts[2]
-                    seq = ""
-
-                } else {
-                    seq += line.trim()
-                }
-            }
-
-            if (enst != null) {
-                results << tuple(sample, type, enst, seq)
-            }
-        }
-
-        results
-    }
-
-    fasta_ch = transcripts_fasta | MAKE_FASTA
+    fasta_ch = transcripts | MAKE_FASTA
     netchop_out = fasta_ch | NETCHOP
 
 
-    peptides_input = Channel.fromPath("data/netmhcpan_input/*_peptides.txt")
+    // =====================================================
+    // 🧬 BRANCH 2: PEPTIDES
+    // =====================================================
+    peptides = transcripts | GENERATE_PEPTIDES
+    peptide_txt = peptides | BUILD_PEPTIDE_TXT
 
-    netmhcpan_out = peptides_input
-        .map { pep ->
-            def id = pep.baseName.replace("_peptides", "")
-            def hla = file("data/netmhcpan_input/${id}_hla.txt")
-            tuple(id, pep, hla)
+
+    // =====================================================
+    // 🧬 HLA FILES
+    // =====================================================
+    hla_files = Channel.fromPath("data/netmhcpan_input/*_hla.txt")
+        .map { f ->
+            tuple(f.baseName.replace("_hla",""), f)
         }
-        | NETMHCPAN
 
+
+    // =====================================================
+    // 🧬 PEPTIDE FILES
+    // =====================================================
+    peptide_ch = peptide_txt
+        .map { pep ->
+            def f = pep instanceof List ? pep[-1] : pep
+            def id = f.baseName.replace("_peptides","")
+            tuple(id, f)
+        }
+
+
+    // =====================================================
+    // 🧬 JOIN PEPTIDES + HLA
+    // =====================================================
+    netmhcpan_in = peptide_ch.join(hla_files)
+
+
+    // =====================================================
+    // 🧬 NETMHCPAN
+    // =====================================================
+    netmhcpan_out = netmhcpan_in | NETMHCPAN
 }

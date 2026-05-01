@@ -9,7 +9,7 @@ def main():
 
     parser.add_argument("--sample_id", required=True)
     parser.add_argument("--maf", required=True)
-    parser.add_argument("--output_dir", default="out")
+    parser.add_argument("--output", required=True)
 
     args = parser.parse_args()
 
@@ -18,7 +18,7 @@ def main():
     if maf.empty:
         raise ValueError(f"MAF file is empty: {args.maf}")
 
-    output_path = process_sample_mutations(args.sample_id, maf, args.output_dir)
+    output_path = process_sample_mutations(args.sample_id, maf, args.output)
 
     print(f"Done: {output_path}")
 

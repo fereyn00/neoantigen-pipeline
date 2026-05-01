@@ -13,6 +13,6 @@ process BUILD_TRANSCRIPTS {
     PYTHONPATH=${projectDir}/scr python3 -m pipeline.cli \
         --sample_id ${sample_id} \
         --maf ${maf_file} \
-        --output_dir .
+        --output ${sample_id}_transcripts.csv
     """
 }
