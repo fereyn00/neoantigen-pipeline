@@ -1,8 +1,8 @@
 # netChop ENST00000343455.fasta -t 0.5 -v 0
-# Fri May  1 09:21:10 2026
+# Fri May  1 16:05:55 2026
 # User: unknown
-# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/7b/baaefc3327464cb4558520daa500a7
-# Host: Linux 04effaf567e7 6.12.54-linuxkit x86_64
+# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/32/24d5a07db2e2ea59f0a2882574955d
+# Host: Linux 96f545e71b82 6.12.54-linuxkit x86_64
 # -t       0.500000             Threshold for assigned cleavage site
 # -v       0                    [0] Cterm3.0 [1] 20S-3.0
 # Command line parameters set to:
@@ -14,7 +14,7 @@
 #	[-tdir filename]     /tmp/netChopXXXXXX   Temporary directory (made with mkdtemp)
 #	[-dirty]             0                    Dirty model, keep temp files
 #	[-ostrict]           0                    Turn off strict mode
-# Tmpdir made /tmp/netChopCduKs0
+# Tmpdir made /tmp/netChophAOllw
 NetChop 3.0 predictions using version C-term. Threshold 0.500000
 
 --------------------------------------
@@ -776,35 +776,35 @@ NetChop 3.0 predictions using version C-term. Threshold 0.500000
  754   P  .   0.042030 ENST000003
  755   E  .   0.039889 ENST000003
  756   C  .   0.213518 ENST000003
- 757   L  S   0.967320 ENST000003
- 758   R  .   0.342402 ENST000003
- 759   D  .   0.259649 ENST000003
- 760   S  .   0.039886 ENST000003
- 761   Y  S   0.926830 ENST000003
- 762   P  .   0.033468 ENST000003
- 763   R  .   0.060138 ENST000003
- 764   P  .   0.041124 ENST000003
- 765   D  .   0.064507 ENST000003
- 766   Q  .   0.023063 ENST000003
- 767   P  .   0.028911 ENST000003
- 768   C  .   0.048675 ENST000003
- 769   Y  S   0.892521 ENST000003
- 770   L  S   0.741708 ENST000003
- 771   Y  S   0.972857 ENST000003
- 772   V  .   0.166653 ENST000003
- 773   I  .   0.331836 ENST000003
- 774   G  .   0.047344 ENST000003
- 775   M  .   0.433635 ENST000003
- 776   V  S   0.857397 ENST000003
- 777   F  S   0.974639 ENST000003
- 778   T  .   0.055418 ENST000003
- 779   T  .   0.083503 ENST000003
- 780   P  .   0.070935 ENST000003
- 781   L  S   0.702450 ENST000003
- 782   P  .   0.041488 ENST000003
- 783   D  .   0.052525 ENST000003
- 784   E  .   0.025971 ENST000003
- 785   L  S   0.905692 ENST000003
+ 757   L  S   0.969331 ENST000003
+ 758   R  .   0.255827 ENST000003
+ 759   D  .   0.191629 ENST000003
+ 760   S  .   0.029948 ENST000003
+ 761   Y  S   0.883420 ENST000003
+ 762   P  .   0.028630 ENST000003
+ 763   R  .   0.098854 ENST000003
+ 764   P  .   0.040118 ENST000003
+ 765   A  .   0.342252 ENST000003
+ 766   Q  .   0.022989 ENST000003
+ 767   P  .   0.050265 ENST000003
+ 768   C  .   0.047812 ENST000003
+ 769   Y  S   0.931520 ENST000003
+ 770   L  .   0.410896 ENST000003
+ 771   Y  S   0.964364 ENST000003
+ 772   V  .   0.226395 ENST000003
+ 773   I  S   0.599678 ENST000003
+ 774   G  .   0.050502 ENST000003
+ 775   M  .   0.465959 ENST000003
+ 776   V  S   0.843115 ENST000003
+ 777   L  S   0.977507 ENST000003
+ 778   T  .   0.139734 ENST000003
+ 779   T  .   0.075745 ENST000003
+ 780   P  .   0.037605 ENST000003
+ 781   L  S   0.529432 ENST000003
+ 782   P  .   0.036268 ENST000003
+ 783   D  .   0.037798 ENST000003
+ 784   E  .   0.030995 ENST000003
+ 785   L  S   0.927322 ENST000003
  786   N  .   0.041453 ENST000003
  787   F  S   0.971218 ENST000003
  788   R  S   0.859929 ENST000003

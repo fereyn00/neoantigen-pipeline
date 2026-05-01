@@ -1,8 +1,8 @@
 # netChop ENST00000319584.fasta -t 0.5 -v 0
-# Fri May  1 09:20:52 2026
+# Fri May  1 16:05:45 2026
 # User: unknown
-# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/d0/6f9e8bbfd426c16087b06aa336477e
-# Host: Linux e96e4bb52b7e 6.12.54-linuxkit x86_64
+# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/68/5c63e46f92a6f2af17da4962d7dc6c
+# Host: Linux 964d4d2b3d62 6.12.54-linuxkit x86_64
 # -t       0.500000             Threshold for assigned cleavage site
 # -v       0                    [0] Cterm3.0 [1] 20S-3.0
 # Command line parameters set to:
@@ -14,7 +14,7 @@
 #	[-tdir filename]     /tmp/netChopXXXXXX   Temporary directory (made with mkdtemp)
 #	[-dirty]             0                    Dirty model, keep temp files
 #	[-ostrict]           0                    Turn off strict mode
-# Tmpdir made /tmp/netChop0jUEol
+# Tmpdir made /tmp/netChop6ZQdAs
 NetChop 3.0 predictions using version C-term. Threshold 0.500000
 
 --------------------------------------
@@ -200,23 +200,23 @@ NetChop 3.0 predictions using version C-term. Threshold 0.500000
  178   G  .   0.267352 ENST000003
  179   S  S   0.555395 ENST000003
  180   Q  S   0.922951 ENST000003
- 181   S  S   0.814739 ENST000003
- 182   E  S   0.582955 ENST000003
- 183   S  S   0.504345 ENST000003
- 184   S  .   0.242063 ENST000003
- 185   S  .   0.039898 ENST000003
- 186   H  .   0.164561 ENST000003
- 187   P  S   0.744972 ENST000003
- 188   A  .   0.428030 ENST000003
- 189   L  S   0.970991 ENST000003
- 190   S  .   0.076603 ENST000003
- 191   Q  .   0.135164 ENST000003
- 192   S  .   0.105316 ENST000003
- 193   P  .   0.066981 ENST000003
- 194   M  S   0.760808 ENST000003
- 195   P  .   0.066438 ENST000003
- 196   Q  .   0.242770 ENST000003
- 197   E  .   0.026016 ENST000003
+ 181   S  S   0.842849 ENST000003
+ 182   E  S   0.580406 ENST000003
+ 183   S  .   0.337871 ENST000003
+ 184   S  .   0.198096 ENST000003
+ 185   S  .   0.029403 ENST000003
+ 186   H  .   0.174170 ENST000003
+ 187   P  S   0.583149 ENST000003
+ 188   A  .   0.306420 ENST000003
+ 189   V  S   0.954179 ENST000003
+ 190   S  .   0.102765 ENST000003
+ 191   Q  .   0.162423 ENST000003
+ 192   S  .   0.146132 ENST000003
+ 193   P  .   0.158596 ENST000003
+ 194   M  S   0.687493 ENST000003
+ 195   P  .   0.070276 ENST000003
+ 196   Q  .   0.123474 ENST000003
+ 197   E  .   0.025170 ENST000003
  198   R  .   0.336572 ENST000003
  199   G  .   0.026910 ENST000003
  200   F  S   0.909688 ENST000003
@@ -382,23 +382,23 @@ NetChop 3.0 predictions using version C-term. Threshold 0.500000
  360   A  .   0.353885 ENST000003
  361   A  .   0.122382 ENST000003
  362   A  .   0.102354 ENST000003
- 363   N  .   0.038097 ENST000003
- 364   S  .   0.028647 ENST000003
- 365   A  S   0.847340 ENST000003
- 366   Q  .   0.051089 ENST000003
- 367   S  .   0.053685 ENST000003
- 368   R  S   0.689771 ENST000003
- 369   Q  .   0.064950 ENST000003
- 370   G  .   0.034143 ENST000003
- 371   R  .   0.041199 ENST000003
- 372   F  .   0.374684 ENST000003
- 373   P  .   0.022801 ENST000003
- 374   G  .   0.036672 ENST000003
- 375   M  S   0.953053 ENST000003
- 376   N  .   0.035114 ENST000003
- 377   Q  .   0.051530 ENST000003
- 378   S  S   0.654741 ENST000003
- 379   G  .   0.110261 ENST000003
+ 363   N  .   0.039924 ENST000003
+ 364   S  .   0.034107 ENST000003
+ 365   A  S   0.914093 ENST000003
+ 366   Q  .   0.041478 ENST000003
+ 367   S  .   0.066271 ENST000003
+ 368   R  S   0.779711 ENST000003
+ 369   Q  .   0.056484 ENST000003
+ 370   G  .   0.036219 ENST000003
+ 371   S  .   0.023008 ENST000003
+ 372   F  .   0.430950 ENST000003
+ 373   P  .   0.023736 ENST000003
+ 374   G  .   0.073669 ENST000003
+ 375   M  S   0.958244 ENST000003
+ 376   N  .   0.036169 ENST000003
+ 377   Q  .   0.068578 ENST000003
+ 378   S  .   0.273014 ENST000003
+ 379   G  .   0.150946 ENST000003
  380   L  S   0.939812 ENST000003
  381   M  S   0.634453 ENST000003
  382   A  S   0.889700 ENST000003
@@ -749,6 +749,6 @@ NetChop 3.0 predictions using version C-term. Threshold 0.500000
  727   K  S   0.589265 ENST000003
 --------------------------------------
 
-Number of cleavage sites 236. Number of amino acids 727. Protein name ENST000003
+Number of cleavage sites 234. Number of amino acids 727. Protein name ENST000003
 
 --------------------------------------

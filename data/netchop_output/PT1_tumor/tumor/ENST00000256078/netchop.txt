@@ -1,8 +1,8 @@
 # netChop ENST00000256078.fasta -t 0.5 -v 0
-# Fri May  1 09:21:28 2026
+# Fri May  1 16:06:14 2026
 # User: unknown
-# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/dc/8d81a4670ecc130545c40848c1eaf2
-# Host: Linux 596592d23f84 6.12.54-linuxkit x86_64
+# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/6a/6a0ad6cd7ebc6faeb2095cce62f286
+# Host: Linux 09ef249b1793 6.12.54-linuxkit x86_64
 # -t       0.500000             Threshold for assigned cleavage site
 # -v       0                    [0] Cterm3.0 [1] 20S-3.0
 # Command line parameters set to:
@@ -14,7 +14,7 @@
 #	[-tdir filename]     /tmp/netChopXXXXXX   Temporary directory (made with mkdtemp)
 #	[-dirty]             0                    Dirty model, keep temp files
 #	[-ostrict]           0                    Turn off strict mode
-# Tmpdir made /tmp/netChop60gQlt
+# Tmpdir made /tmp/netChopmWQ2Rt
 NetChop 3.0 predictions using version C-term. Threshold 0.500000
 
 --------------------------------------

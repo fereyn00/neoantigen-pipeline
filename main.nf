@@ -7,6 +7,7 @@ nextflow.enable.dsl=2
 // -----------------------------
 include { BUILD_TRANSCRIPTS } from './modules/build_transcripts.nf'
 include { GENERATE_PEPTIDES } from './modules/build_peptides.nf'
+include { BUILD_PEPTIDE_TXT } from './modules/build_peptides_txt.nf'
 
 
 // -----------------------------
@@ -39,6 +40,7 @@ workflow {
     // 🧬 STEP 2: PEPTIDES (FIXED — YOU MISSED THIS)
     // =====================================================
     peptides = transcripts | GENERATE_PEPTIDES
+    peptides_txt = peptides | BUILD_PEPTIDE_TXT
 
 
     // =====================================================

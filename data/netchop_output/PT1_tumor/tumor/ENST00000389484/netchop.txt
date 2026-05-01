@@ -1,8 +1,8 @@
 # netChop ENST00000389484.fasta -t 0.5 -v 0
-# Fri May  1 09:21:35 2026
+# Fri May  1 16:06:18 2026
 # User: unknown
-# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/2f/506d4cc2dc5db15804c1df11f6f717
-# Host: Linux 5e7dff0175df 6.12.54-linuxkit x86_64
+# PWD : /Users/user390/Documents/GitHub/neoantigen-pipeline/work/08/76f0aa7b106b709741d0f71dbc3faa
+# Host: Linux 39f08ed050bd 6.12.54-linuxkit x86_64
 # -t       0.500000             Threshold for assigned cleavage site
 # -v       0                    [0] Cterm3.0 [1] 20S-3.0
 # Command line parameters set to:
@@ -14,7 +14,7 @@
 #	[-tdir filename]     /tmp/netChopXXXXXX   Temporary directory (made with mkdtemp)
 #	[-dirty]             0                    Dirty model, keep temp files
 #	[-ostrict]           0                    Turn off strict mode
-# Tmpdir made /tmp/netChopPgsOBQ
+# Tmpdir made /tmp/netChopyPRVWn
 NetChop 3.0 predictions using version C-term. Threshold 0.500000
 
 --------------------------------------
@@ -52,26 +52,26 @@ NetChop 3.0 predictions using version C-term. Threshold 0.500000
   30   Q  .   0.034764 ENST000003
   31   L  S   0.877504 ENST000003
   32   C  .   0.028892 ENST000003
-  33   D  .   0.026155 ENST000003
-  34   P  .   0.055122 ENST000003
-  35   G  .   0.026138 ENST000003
-  36   E  .   0.026043 ENST000003
-  37   F  .   0.240715 ENST000003
-  38   L  S   0.880980 ENST000003
-  39   C  .   0.026114 ENST000003
-  40   H  .   0.054320 ENST000003
-  41   N  .   0.250986 ENST000003
-  42   H  .   0.031434 ENST000003
-  43   V  S   0.938681 ENST000003
-  44   T  .   0.086796 ENST000003
-  45   C  .   0.031059 ENST000003
-  46   V  S   0.558100 ENST000003
-  47   S  .   0.108485 ENST000003
-  48   Q  .   0.212486 ENST000003
-  49   S  .   0.082107 ENST000003
-  50   W  S   0.978681 ENST000003
-  51   L  S   0.797782 ENST000003
-  52   C  .   0.055317 ENST000003
+  33   D  .   0.025839 ENST000003
+  34   P  .   0.086191 ENST000003
+  35   G  .   0.026962 ENST000003
+  36   E  .   0.028687 ENST000003
+  37   F  .   0.285930 ENST000003
+  38   L  S   0.948561 ENST000003
+  39   C  .   0.025043 ENST000003
+  40   H  .   0.046585 ENST000003
+  41   D  .   0.269549 ENST000003
+  42   H  .   0.034060 ENST000003
+  43   V  S   0.871436 ENST000003
+  44   A  .   0.291674 ENST000003
+  45   C  .   0.023950 ENST000003
+  46   V  S   0.541510 ENST000003
+  47   S  .   0.078521 ENST000003
+  48   Q  .   0.285039 ENST000003
+  49   S  .   0.064842 ENST000003
+  50   W  S   0.977674 ENST000003
+  51   L  S   0.782246 ENST000003
+  52   C  .   0.059619 ENST000003
   53   D  .   0.041061 ENST000003
   54   G  .   0.098395 ENST000003
   55   D  .   0.035676 ENST000003
