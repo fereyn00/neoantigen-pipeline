@@ -1,0 +1,19 @@
+process GENERATE_PEPTIDES {
+
+    tag "$sample_id"
+
+    publishDir "data/processed", mode: 'copy'
+
+    input:
+    tuple val(sample_id), path(transcript_csv)
+
+    output:
+    tuple val(sample_id), path("${sample_id}_peptides.csv")
+
+    script:
+    """
+    PYTHONPATH=${projectDir}/scr python3 ${projectDir}/scr/pipeline/peptide_cli.py \
+        --input_file ${transcript_csv} \
+        --output_file ${sample_id}_peptides.csv
+    """
+}
