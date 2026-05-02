@@ -3,6 +3,7 @@ process NETMHCPAN {
     tag "${sample_id}"
 
     container 'netmhcpan_image:latest'
+    containerOptions '--platform=linux/amd64'
 
     publishDir "data/netmhcpan_output", mode: 'copy'
 
@@ -11,8 +12,7 @@ process NETMHCPAN {
 
     output:
     tuple val(sample_id),
-          path("${sample_id}.out"),
-          path("${sample_id}.xls")
+          path("${sample_id}.out")
 
     script:
     """
@@ -24,8 +24,6 @@ process NETMHCPAN {
         -p ${pep_file} \
         -BA \
         -a "\$HLA" \
-        -xls \
-        -xlsfile ${sample_id}.xls \
         > ${sample_id}.out
     """
 }

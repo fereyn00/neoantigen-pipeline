@@ -1,37 +1,44 @@
 process NETCHOP {
 
-    tag "$enst"
+    tag "${sample}:${fasta.simpleName}"
+
     container 'netchop_image:latest'
+    containerOptions '--platform=linux/amd64'
 
     input:
-    tuple val(sample), val(type), val(enst), path(fasta)
+    tuple val(sample), path(fasta)
 
     output:
-    path "netchop.txt"
+    tuple val(sample), path("netchop.txt")
 
-    publishDir {
-        "data/netchop_output/${sample}/${type}/${enst}"
-    }, mode: 'copy', overwrite: true
+    publishDir "data/netchop_output/${sample}",
+        mode: 'copy',
+        overwrite: true,
+        pattern: "**/*"
 
     script:
     """
     export TMPDIR=/tmp
-
     netChop ${fasta} -t 0.5 -v 0 > netchop.txt
     """
 }
 
 process MAKE_FASTA {
 
+    publishDir "data/netchop_input", mode: "copy"
+
     input:
-    tuple val(sample), val(type), val(enst), val(seq)
+    tuple val(sample_id), path(transcript_csv)
 
     output:
-    tuple val(sample), val(type), val(enst), path("${enst}.fasta")
+    tuple val(sample_id), path("${sample_id}/*_tumor.fasta")
 
     script:
     """
-    echo ">${enst}" > ${enst}.fasta
-    echo "${seq}" >> ${enst}.fasta
+    export PYTHONPATH=${projectDir}/scr
+
+    python3 ${projectDir}/scr/pipeline/fasta_from_transcripts.py \
+        --input ${transcript_csv} \
+        --output_dir ${sample_id}
     """
 }

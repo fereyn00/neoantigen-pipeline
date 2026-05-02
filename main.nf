@@ -1,101 +1,64 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
-
 // -----------------------------
-// Neoantigen transcript builder
+// Modules
 // -----------------------------
 include { BUILD_TRANSCRIPTS } from './modules/build_transcripts.nf'
 include { GENERATE_PEPTIDES } from './modules/build_peptides.nf'
 include { BUILD_PEPTIDE_TXT } from './modules/build_peptides_txt.nf'
-
-
-// -----------------------------
-// Existing modules
-// -----------------------------
 include { MAKE_FASTA; NETCHOP } from './modules/netchop.nf'
 include { NETMHCPAN } from './modules/netmhcpan.nf'
 
 
 workflow {
 
-    // =====================================================
-    // 🧬 MAF INPUT
-    // =====================================================
+    // -----------------------------
+    // INPUT MAF
+    // -----------------------------
     maf_files = Channel.fromPath("data/mafs/*.csv")
-        .map { file ->
-            tuple(file.baseName, file)
-        }
+        .map { file -> tuple(file.baseName, file) }
 
     maf_files.view { println "MAF input: $it" }
 
 
-    // =====================================================
-    // 🧬 STEP 1: TRANSCRIPTS
-    // =====================================================
+    // -----------------------------
+    // STEP 1: TRANSCRIPTS
+    // -----------------------------
     transcripts = maf_files | BUILD_TRANSCRIPTS
 
 
-    // =====================================================
-    // 🧬 STEP 2: PEPTIDES (FIXED — YOU MISSED THIS)
-    // =====================================================
+    // -----------------------------
+    // STEP 2: PEPTIDES
+    // -----------------------------
     peptides = transcripts | GENERATE_PEPTIDES
+
+
+    // -----------------------------
+    // STEP 3: PEPTIDE TXT
+    // -----------------------------
     peptides_txt = peptides | BUILD_PEPTIDE_TXT
 
 
-    // =====================================================
-    // 🧬 EXISTING PIPELINE
-    // =====================================================
+    // -----------------------------
+    // STEP 4: FASTA
+    // -----------------------------
+    fasta_ch = transcripts | MAKE_FASTA
 
-    fasta_files = Channel.fromPath("data/netchop_input/*.fasta")
 
-    transcripts_fasta = fasta_files.flatMap { file ->
-
-        def results = []
-        def sample = file.baseName
-        def type = sample.contains("tumor") ? "tumor" : "germline"
-
-        def enst = null
-        def seq = ""
-
-        file.withReader { r ->
-            r.eachLine { line ->
-
-                if (line.startsWith(">")) {
-
-                    if (enst != null) {
-                        results << tuple(sample, type, enst, seq)
-                    }
-
-                    def parts = line.split("\\|")
-                    enst = parts[2]
-                    seq = ""
-
-                } else {
-                    seq += line.trim()
-                }
-            }
-
-            if (enst != null) {
-                results << tuple(sample, type, enst, seq)
-            }
-        }
-
-        results
-    }
-
-    fasta_ch = transcripts_fasta | MAKE_FASTA
+    // -----------------------------
+    // STEP 5: NETCHOP
+    // -----------------------------
     netchop_out = fasta_ch | NETCHOP
 
 
-    peptides_input = Channel.fromPath("data/netmhcpan_input/*_peptides.txt")
-
-    netmhcpan_out = peptides_input
-        .map { pep ->
-            def id = pep.baseName.replace("_peptides", "")
-            def hla = file("data/netmhcpan_input/${id}_hla.txt")
-            tuple(id, pep, hla)
+    // -----------------------------
+    // STEP 6: NETMHC
+    // -----------------------------
+    netmhcpan_out = peptides_txt
+        .map { sample_id, pep ->
+            def hla = file("data/netmhcpan_input/${sample_id}_hla.txt")
+            tuple(sample_id, pep, hla)
         }
         | NETMHCPAN
-
 }
