@@ -9,7 +9,7 @@ process NETCHOP {
     tuple val(sample), path(fasta)
 
     output:
-    tuple val(sample), path("netchop.txt")
+    tuple val(sample), path("${fasta.simpleName}/netchop.txt")
 
     publishDir "data/netchop_output/${sample}",
         mode: 'copy',
@@ -19,7 +19,8 @@ process NETCHOP {
     script:
     """
     export TMPDIR=/tmp
-    netChop ${fasta} -t 0.5 -v 0 > netchop.txt
+    mkdir -p ${fasta.simpleName}
+    netChop ${fasta} -t 0.5 -v 0 > ${fasta.simpleName}/netchop.txt
     """
 }
 

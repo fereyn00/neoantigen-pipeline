@@ -3,7 +3,7 @@ process NETMHCPAN {
     tag "${sample_id}"
 
     container 'netmhcpan_image:latest'
-    containerOptions '--platform=linux/amd64'
+    containerOptions '--platform=linux/arm64/v8'
 
     publishDir "data/netmhcpan_output", mode: 'copy'
 
@@ -16,7 +16,7 @@ process NETMHCPAN {
 
     script:
     """
-    HLA=\$(cat ${hla_file} | tr ',' '\\n' | sed 's/^HLA-//' | sed 's/^/HLA-/' | paste -sd, -)
+    HLA=\$(tr ',;[:space:]' '\\n' < ${hla_file} | tr -d '*' | awk 'NF' | sed 's/^HLA-//' | sed 's/^/HLA-/' | paste -sd, -)
 
     echo "HLA = \$HLA"
 
