@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def parse_netmhcpan_output(text):
-    lines = text.strip().split("\\n")
+    lines = text.splitlines()
     rows = []
     headers_found = False
 
@@ -15,8 +15,8 @@ def parse_netmhcpan_output(text):
             headers_found = True
             continue
 
-        if headers_found and re.match(r"\\s*\\d+\\s+", line):
-            parts = re.split(r"\\s+", line.strip())
+        if headers_found and re.match(r"\s*\d+\s+", line):
+            parts = re.split(r"\s+", line.strip())
 
             if len(parts) < 17:
                 parts += [None] * (17 - len(parts))
@@ -27,8 +27,18 @@ def parse_netmhcpan_output(text):
 
     columns = [
         "Pos", "MHC", "Peptide", "Core", "Of", "Gp", "Gl",
-        "Ip", "Il", "Icore", "Identity", "Score_EL", "Rank_EL",
-        "Score_BA", "Rank_BA", "Aff_nM", "BindLevel"
+        "Ip", "Il", "Icore", "Identity", "Score_EL", "%Rank_EL",
+        "Score_BA", "%Rank_BA", "Affinity(nM)", "BindLevel"
     ]
 
-    return pd.DataFrame(rows, columns=columns)
+    df = pd.DataFrame(rows, columns=columns)
+
+    numeric_cols = [
+        "Pos", "Of", "Gp", "Gl", "Ip", "Il",
+        "Score_EL", "%Rank_EL", "Score_BA", "%Rank_BA",
+        "Affinity(nM)",
+    ]
+    for col in numeric_cols:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    return df

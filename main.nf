@@ -7,6 +7,7 @@ include { BUILD_PEPTIDE_TXT } from './modules/build_peptides_txt.nf'
 include { MAKE_FASTA; NETCHOP } from './modules/netchop.nf'
 include { NETMHCPAN } from './modules/netmhcpan.nf'
 include { ENSURE_DOCKER_IMAGES } from './modules/docker_images.nf'
+include { ADD_NETCHOP_SCORE; ADD_IC50; ADD_EXPRESSION; ADD_PEPTIDE_SCORE } from './modules/add_scores.nf'
 
 
 workflow {
@@ -48,4 +49,21 @@ workflow {
             tuple(sample_id, pep, hla)
         }
         | NETMHCPAN
+
+    peptides_with_netchop = peptides
+        .join(netchop_out.groupTuple())
+        | ADD_NETCHOP_SCORE
+
+    peptides_with_ic50 = peptides_with_netchop
+        .join(netmhcpan_out)
+        | ADD_IC50
+
+    peptides_with_expressions = peptides_with_ic50
+        .map { sample_id, peptides_csv ->
+            def expression_file = file("data/expressions/${sample_id}_kallisto_expressions.csv")
+            tuple(sample_id, peptides_csv, expression_file)
+        }
+        | ADD_EXPRESSION
+
+    peptides_with_peptide_score = peptides_with_expressions | ADD_PEPTIDE_SCORE
 }
