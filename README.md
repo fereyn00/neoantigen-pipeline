@@ -1,14 +1,95 @@
 # Neoantigen Discovery Pipeline
 
-This pipeline processes somatic and germline mutations to identify and rank neoantigen candidates based on MHC binding affinity, proteasomal cleavage, and gene expression.
+This Nextflow pipeline processes somatic mutations and ranks neoantigen candidates using peptide-MHC binding, NetChop cleavage scores, and expression-derived weighting.
 
 ## Workflow
-1. **Sequence Generation**: Fetch wild-type sequences from Ensembl and apply mutations.
-2. **Peptide Extraction**: Generate all possible 8-14mer peptides overlapping mutation sites.
-3. **Tool Integration**: Integrates results from `NetChop` (cleavage) and `NetMHCpan` (binding).
-4. **Scoring**: Ranks candidates using a hyperbolic tangent weighted scoring system.
+
+1. Build mutated protein sequences from each sample MAF.
+2. Generate mutation-overlapping 8-14mer peptides.
+3. Run NetChop per transcript FASTA.
+4. Split NetMHCpan work by HLA allele and peptide chunk.
+5. Combine NetChop, NetMHCpan, and expression data into one final scored candidate table.
+
+The final published result is written to `output/`.
+
+## Inputs
+
+By default, place one sample MAF per file in:
+
+```text
+data/mafs/<sample_id>.csv
+```
+
+Place the matching HLA alleles in:
+
+```text
+data/netmhcpan_input/<sample_id>_hla.txt
+```
+
+Place the matching expression table in:
+
+```text
+data/expressions/<sample_id>_kallisto_expressions.csv
+```
+
+For example, sample `PT1` uses:
+
+```text
+data/mafs/PT1.csv
+data/netmhcpan_input/PT1_hla.txt
+data/expressions/PT1_kallisto_expressions.csv
+```
+
+The sample id is taken from the MAF filename, so the HLA and expression filenames must use the same sample id.
+
+The input locations can also be provided as run parameters:
+
+```bash
+nextflow run main.nf \
+    --maf_glob "data/mafs/*.csv" \
+    --hla_dir data/netmhcpan_input \
+    --expression_dir data/expressions
+```
+
+## Requirements
+
+Install the Python dependencies with:
+
+```bash
+pip install -r requirements.txt
+```
+
+The pipeline also requires Nextflow and Docker. Download NetChop and NetMHCpan manually from (https://services.healthtech.dtu.dk/services/NetChop-3.1/) and https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/ axxordingly, then place the downloaded archives in the Docker build directories:
+
+```text
+docker/netchop/netChop.tar.gz
+docker/netmhcpan/netMHCpan.tar.gz
+```
+
+The workflow builds the local Docker images automatically from `docker/netchop` and `docker/netmhcpan`.
 
 ## Run
+
 ```bash
 nextflow run main.nf
 ```
+
+NetMHCpan chunking can be tuned at runtime:
+
+```bash
+nextflow run main.nf \
+    --netmhcpan_chunk_size 2000 \
+    --netmhcpan_max_forks 4
+```
+
+Increase `netmhcpan_max_forks` if the machine has enough CPU and memory for more concurrent NetMHCpan containers. Decrease `netmhcpan_chunk_size` if individual NetMHCpan tasks are still too large.
+
+## Output
+
+Each sample produces:
+
+```text
+output/<sample_id>_neoantigen_candidates.csv
+```
+
+The final table contains peptide metadata, HLA allele, NetChop score, IC50, expression score, component scores, and final `PeptideScore`.

@@ -3,7 +3,7 @@ process GENERATE_PEPTIDES {
     tag "$sample_id"
 
     input:
-    tuple val(sample_id), path(transcript_csv)
+    tuple val(sample_id), path(transcript_csv), path(hla_file)
 
     output:
     tuple val(sample_id), path("${sample_id}_peptides.csv")
@@ -13,6 +13,6 @@ process GENERATE_PEPTIDES {
     PYTHONPATH=${projectDir}/scr python3 ${projectDir}/scr/pipeline/peptide_cli.py \
         --input_file ${transcript_csv} \
         --output_file ${sample_id}_peptides.csv \
-        --hla_file ${projectDir}/data/netmhcpan_input/${sample_id}_hla.txt
+        --hla_file ${hla_file}
     """
 }

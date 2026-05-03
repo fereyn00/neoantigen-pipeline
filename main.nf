@@ -14,7 +14,7 @@ workflow {
 
     docker_images_ready = ENSURE_DOCKER_IMAGES()
 
-    maf_files = Channel.fromPath("data/mafs/*.csv")
+    maf_files = Channel.fromPath(params.maf_glob)
         .map { file -> tuple(file.baseName, file) }
 
     maf_files.view { println "MAF input: $it" }
@@ -23,7 +23,14 @@ workflow {
     transcripts = maf_files | BUILD_TRANSCRIPTS
 
 
-    peptides = transcripts | GENERATE_PEPTIDES
+    peptide_inputs = transcripts
+        .map { sample_id, transcript_csv ->
+            def hla = file("${params.hla_dir}/${sample_id}_hla.txt")
+            tuple(sample_id, transcript_csv, hla)
+        }
+
+
+    peptides = peptide_inputs | GENERATE_PEPTIDES
 
 
     peptides_txt = peptides | BUILD_PEPTIDE_TXT
@@ -44,7 +51,7 @@ workflow {
 
     netmhcpan_batches = peptides_txt
         .map { sample_id, pep ->
-            def hla = file("data/netmhcpan_input/${sample_id}_hla.txt")
+            def hla = file("${params.hla_dir}/${sample_id}_hla.txt")
             tuple(sample_id, pep, hla)
         }
         | SPLIT_NETMHCPAN_BATCHES
@@ -72,7 +79,7 @@ workflow {
         .join(netchop_out.groupTuple())
         .join(netmhcpan_out.groupTuple())
         .map { sample_id, peptides_csv, netchop_dirs, netmhcpan_files ->
-            def expression_file = file("data/expressions/${sample_id}_kallisto_expressions.csv")
+            def expression_file = file("${params.expression_dir}/${sample_id}_kallisto_expressions.csv")
             tuple(sample_id, peptides_csv, netchop_dirs, netmhcpan_files, expression_file)
         }
         | ADD_FINAL_SCORE
