@@ -59,7 +59,7 @@ Install the Python dependencies with:
 pip install -r requirements.txt
 ```
 
-The pipeline also requires Nextflow and Docker. Download NetChop and NetMHCpan manually from (https://services.healthtech.dtu.dk/services/NetChop-3.1/) and https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/ axxordingly, then place the downloaded archives in the Docker build directories:
+The pipeline also requires Nextflow and Docker. Download NetChop and NetMHCpan manually from (https://services.healthtech.dtu.dk/services/NetChop-3.1/) and (https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/) axxordingly, then place the downloaded archives in the Docker build directories:
 
 ```text
 docker/netchop/netChop.tar.gz
