@@ -3,3 +3,9 @@ work/
 *.zip
 *.tar.gz
 *.txt
+*.out
+data/processed/
+data/processed_with_*/
+data/netchop_input/
+data/netchop_output/
+data/netmhcpan_output/

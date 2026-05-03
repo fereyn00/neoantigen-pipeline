@@ -10,4 +10,5 @@ This pipeline processes somatic and germline mutations to identify and rank neoa
 
 ## Run
 ```bash
-python -m src.pipeline.run_pipeline
+nextflow run main.nf
+```

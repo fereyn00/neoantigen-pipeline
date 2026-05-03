@@ -2,8 +2,6 @@ process GENERATE_PEPTIDES {
 
     tag "$sample_id"
 
-    publishDir "data/processed", mode: 'copy'
-
     input:
     tuple val(sample_id), path(transcript_csv)
 

@@ -1,7 +1,5 @@
 process BUILD_TRANSCRIPTS {
 
-    publishDir "data/processed", mode: 'copy'
-
     input:
     tuple val(sample_id), path(maf_file)
 

@@ -5,9 +5,9 @@ include { BUILD_TRANSCRIPTS } from './modules/build_transcripts.nf'
 include { GENERATE_PEPTIDES } from './modules/build_peptides.nf'
 include { BUILD_PEPTIDE_TXT } from './modules/build_peptides_txt.nf'
 include { MAKE_FASTA; NETCHOP } from './modules/netchop.nf'
-include { NETMHCPAN } from './modules/netmhcpan.nf'
+include { SPLIT_NETMHCPAN_BATCHES; NETMHCPAN } from './modules/netmhcpan.nf'
 include { ENSURE_DOCKER_IMAGES } from './modules/docker_images.nf'
-include { ADD_NETCHOP_SCORE; ADD_IC50; ADD_EXPRESSION; ADD_PEPTIDE_SCORE } from './modules/add_scores.nf'
+include { ADD_FINAL_SCORE } from './modules/add_scores.nf'
 
 
 workflow {
@@ -42,28 +42,38 @@ workflow {
         | NETCHOP
 
 
-    netmhcpan_out = peptides_txt
-        .combine(docker_images_ready)
-        .map { sample_id, pep, ready ->
+    netmhcpan_batches = peptides_txt
+        .map { sample_id, pep ->
             def hla = file("data/netmhcpan_input/${sample_id}_hla.txt")
             tuple(sample_id, pep, hla)
         }
+        | SPLIT_NETMHCPAN_BATCHES
+
+    netmhcpan_batch_files = netmhcpan_batches
+        .flatMap { sample_id, batch_files ->
+            def files = batch_files instanceof Collection ? batch_files : [batch_files]
+            files.collect { batch_file ->
+                def match = batch_file.name =~ /^(HLA-[^_]+)__chunk_(\d+)\.txt$/
+                if (!match) {
+                    throw new IllegalArgumentException("Unexpected NetMHCpan batch file: ${batch_file.name}")
+                }
+                tuple(sample_id, match[0][1], match[0][2], batch_file)
+            }
+        }
+
+    netmhcpan_out = netmhcpan_batch_files
+        .combine(docker_images_ready)
+        .map { sample_id, hla, chunk_id, pep, ready ->
+            tuple(sample_id, hla, chunk_id, pep)
+        }
         | NETMHCPAN
 
-    peptides_with_netchop = peptides
+    final_scores = peptides
         .join(netchop_out.groupTuple())
-        | ADD_NETCHOP_SCORE
-
-    peptides_with_ic50 = peptides_with_netchop
-        .join(netmhcpan_out)
-        | ADD_IC50
-
-    peptides_with_expressions = peptides_with_ic50
-        .map { sample_id, peptides_csv ->
+        .join(netmhcpan_out.groupTuple())
+        .map { sample_id, peptides_csv, netchop_dirs, netmhcpan_files ->
             def expression_file = file("data/expressions/${sample_id}_kallisto_expressions.csv")
-            tuple(sample_id, peptides_csv, expression_file)
+            tuple(sample_id, peptides_csv, netchop_dirs, netmhcpan_files, expression_file)
         }
-        | ADD_EXPRESSION
-
-    peptides_with_peptide_score = peptides_with_expressions | ADD_PEPTIDE_SCORE
+        | ADD_FINAL_SCORE
 }

@@ -2,8 +2,6 @@ process BUILD_PEPTIDE_TXT {
 
     tag "$sample_id"
 
-    publishDir "data/netmhcpan_input", mode: 'copy'
-
     input:
     tuple val(sample_id), path(peptides_csv)
 

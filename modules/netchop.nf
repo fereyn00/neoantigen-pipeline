@@ -11,11 +11,6 @@ process NETCHOP {
     output:
     tuple val(sample), path("${fasta.simpleName}")
 
-    publishDir "data/netchop_output/${sample}",
-        mode: 'copy',
-        overwrite: true,
-        pattern: "**/*"
-
     script:
     """
     export TMPDIR=/tmp
@@ -25,8 +20,6 @@ process NETCHOP {
 }
 
 process MAKE_FASTA {
-
-    publishDir "data/netchop_input", mode: "copy"
 
     input:
     tuple val(sample_id), path(transcript_csv)
