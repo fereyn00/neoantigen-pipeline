@@ -64,7 +64,11 @@ def parse_protein_change(ref_aa, alt_aa):
 
 
 def generate_mutation_centered_peptides(
-    tumor_seq: str, mutation_position: int, alt_sequence: str, peptide_length: int
+    tumor_seq: str,
+    mutation_position: int,
+    alt_sequence: str,
+    peptide_length: int,
+    include_positions: bool = False,
 ):
     peptides = []
 
@@ -83,7 +87,10 @@ def generate_mutation_centered_peptides(
         peptide = tumor_seq[window_start:window_end]
 
         if window_end > mut_start and window_start <= mut_end:
-            peptides.append(peptide)
+            if include_positions:
+                peptides.append((peptide, window_start + 1))
+            else:
+                peptides.append(peptide)
 
     return peptides
 

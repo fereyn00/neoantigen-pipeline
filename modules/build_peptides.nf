@@ -14,6 +14,7 @@ process GENERATE_PEPTIDES {
     """
     PYTHONPATH=${projectDir}/scr python3 ${projectDir}/scr/pipeline/peptide_cli.py \
         --input_file ${transcript_csv} \
-        --output_file ${sample_id}_peptides.csv
+        --output_file ${sample_id}_peptides.csv \
+        --hla_file ${projectDir}/data/netmhcpan_input/${sample_id}_hla.txt
     """
 }

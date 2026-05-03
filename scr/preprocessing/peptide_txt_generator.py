@@ -7,7 +7,13 @@ def generate_peptide_txt(input_csv, output_txt):
     if "Peptide" not in df.columns:
         raise ValueError("Column 'Peptide' not found in input CSV")
 
-    peptides = df["Peptide"].dropna().astype(str).str.strip().unique()
+    peptides = (
+        df["Peptide"]
+        .dropna()
+        .astype(str)
+        .str.strip()
+        .drop_duplicates()
+    )
 
     with open(output_txt, "w") as f:
         for pep in peptides:
