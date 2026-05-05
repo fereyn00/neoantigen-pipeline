@@ -6,6 +6,9 @@ from pathlib import Path
 import pandas as pd
 
 from scoring.expression_score import add_expression_score
+from scoring.hla import normalize_hla, normalize_peptide
+from scoring.mhcflurry import MHCFLURRY_COLUMNS, parse_mhcflurry_output
+from scoring.mixmhcpred import MIXMHCPRED_COLUMNS, parse_mixmhcpred_output
 from scoring.netchop import netchop_score_for_peptide, parse_netchop
 from scoring.netmhcpan import parse_netmhcpan_output
 from scoring.peptide_score import add_peptide_score
@@ -35,14 +38,6 @@ def netchop_index(netchop_dir):
         if match:
             index[match.group(1)] = parse_netchop(path)
     return index
-
-
-def normalize_hla(value):
-    return str(value).replace("*", "").replace(":", "")
-
-
-def normalize_peptide(value):
-    return str(value).replace("-", "")
 
 
 def expression_lookup(expression_file):
@@ -126,6 +121,60 @@ def add_ic50_scores(df, netmhcpan_files):
     return merged.drop(columns=["_merge_hla", "_merge_peptide"])
 
 
+def add_prediction_scores(df, predictions, prediction_columns):
+    pep_col = peptide_column(df)
+    df = df.copy()
+
+    for column in prediction_columns:
+        if column in df.columns:
+            df = df.drop(columns=[column])
+
+    if predictions.empty:
+        for column in prediction_columns:
+            df[column] = pd.NA
+        return df
+
+    predictions = predictions.copy()
+    df["_merge_hla"] = df["HLA"].map(normalize_hla)
+    df["_merge_peptide"] = df[pep_col].map(normalize_peptide)
+    predictions["_merge_hla"] = predictions["HLA"].map(normalize_hla)
+    predictions["_merge_peptide"] = predictions["Peptide"].map(normalize_peptide)
+    predictions = predictions.drop_duplicates(["_merge_hla", "_merge_peptide"])
+
+    available_columns = [
+        column for column in prediction_columns if column in predictions.columns
+    ]
+    merged = pd.merge(
+        df,
+        predictions[["_merge_hla", "_merge_peptide", *available_columns]],
+        on=["_merge_hla", "_merge_peptide"],
+        how="left",
+    )
+
+    for column in prediction_columns:
+        if column not in merged.columns:
+            merged[column] = pd.NA
+        merged[column] = pd.to_numeric(merged[column], errors="coerce")
+
+    return merged.drop(columns=["_merge_hla", "_merge_peptide"])
+
+
+def add_mhcflurry_scores(df, mhcflurry_file):
+    return add_prediction_scores(
+        df,
+        parse_mhcflurry_output(mhcflurry_file),
+        MHCFLURRY_COLUMNS,
+    )
+
+
+def add_mixmhcpred_scores(df, mixmhcpred_file):
+    return add_prediction_scores(
+        df,
+        parse_mixmhcpred_output(mixmhcpred_file),
+        MIXMHCPRED_COLUMNS,
+    )
+
+
 def add_expression_scores(df, expression_file):
     expr = expression_lookup(expression_file)
     df = df.copy()
@@ -140,12 +189,34 @@ def add_expression_scores(df, expression_file):
     return add_expression_score(merged)
 
 
-def process_file(input_file, netchop_dir, netmhcpan_files, expression_file, output_file):
+def move_columns_after(df, columns, anchor):
+    existing = [column for column in columns if column in df.columns]
+    if not existing or anchor not in df.columns:
+        return df
+
+    remaining = [column for column in df.columns if column not in existing]
+    anchor_index = remaining.index(anchor) + 1
+    ordered = remaining[:anchor_index] + existing + remaining[anchor_index:]
+    return df[ordered]
+
+
+def process_file(
+    input_file,
+    netchop_dir,
+    netmhcpan_files,
+    mhcflurry_file,
+    mixmhcpred_file,
+    expression_file,
+    output_file,
+):
     df = pd.read_csv(input_file)
     df = add_netchop_scores(df, netchop_dir)
     df = add_ic50_scores(df, netmhcpan_files)
+    df = add_mhcflurry_scores(df, mhcflurry_file)
+    df = add_mixmhcpred_scores(df, mixmhcpred_file)
     df = add_expression_scores(df, expression_file)
     df = add_peptide_score(df)
+    df = move_columns_after(df, [*MHCFLURRY_COLUMNS, *MIXMHCPRED_COLUMNS], "IC50")
     df.to_csv(output_file, index=False)
 
 
@@ -154,6 +225,8 @@ def main():
     parser.add_argument("--input_file", required=True)
     parser.add_argument("--netchop_dir", required=True)
     parser.add_argument("--netmhcpan_files", nargs="+", required=True)
+    parser.add_argument("--mhcflurry_file", required=True)
+    parser.add_argument("--mixmhcpred_file", required=True)
     parser.add_argument("--expression_file", required=True)
     parser.add_argument("--output_file", required=True)
 
@@ -162,6 +235,8 @@ def main():
         input_file=args.input_file,
         netchop_dir=args.netchop_dir,
         netmhcpan_files=args.netmhcpan_files,
+        mhcflurry_file=args.mhcflurry_file,
+        mixmhcpred_file=args.mixmhcpred_file,
         expression_file=args.expression_file,
         output_file=args.output_file,
     )

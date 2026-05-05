@@ -21,6 +21,6 @@ def add_peptide_score(df):
     if missing:
         raise ValueError(f"Missing required columns: {', '.join(sorted(missing))}")
 
-    df = df[df["IC50"] < 500].copy()
+    df = df.copy()
     df = compute_peptide_score_df(df)
     return df.sort_values(by="PeptideScore", ascending=False)

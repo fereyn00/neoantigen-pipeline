@@ -6,6 +6,8 @@ include { GENERATE_PEPTIDES } from './modules/build_peptides.nf'
 include { BUILD_PEPTIDE_TXT } from './modules/build_peptides_txt.nf'
 include { MAKE_FASTA; NETCHOP } from './modules/netchop.nf'
 include { SPLIT_NETMHCPAN_BATCHES; NETMHCPAN } from './modules/netmhcpan.nf'
+include { BUILD_MHCFLURRY_INPUT; MHCFLURRY } from './modules/mhcflurry.nf'
+include { BUILD_MIXMHCPRED_ALLELES; MIXMHCPRED } from './modules/mixmhcpred.nf'
 include { ENSURE_DOCKER_IMAGES } from './modules/docker_images.nf'
 include { ADD_FINAL_SCORE } from './modules/add_scores.nf'
 
@@ -35,6 +37,28 @@ workflow {
 
     peptides_txt = peptides | BUILD_PEPTIDE_TXT
 
+    mhcflurry_inputs = peptides | BUILD_MHCFLURRY_INPUT
+
+    mhcflurry_out = mhcflurry_inputs
+        .combine(docker_images_ready)
+        .map { sample_id, mhcflurry_input_csv, ready -> tuple(sample_id, mhcflurry_input_csv) }
+        | MHCFLURRY
+
+    mixmhcpred_inputs = peptides_txt
+        .map { sample_id, pep ->
+            def hla = file("${params.hla_dir}/${sample_id}_hla.txt")
+            tuple(sample_id, pep, hla)
+        }
+
+    mixmhcpred_alleles = mixmhcpred_inputs
+        .map { sample_id, pep, hla -> tuple(sample_id, hla) }
+        | BUILD_MIXMHCPRED_ALLELES
+
+    mixmhcpred_out = mixmhcpred_inputs
+        .join(mixmhcpred_alleles)
+        .combine(docker_images_ready)
+        .map { sample_id, pep, hla, allele_file, ready -> tuple(sample_id, pep, allele_file) }
+        | MIXMHCPRED
 
     fasta_ch = (transcripts | MAKE_FASTA)
         .flatMap { sample_id, fasta_files ->
@@ -78,9 +102,11 @@ workflow {
     final_scores = peptides
         .join(netchop_out.groupTuple())
         .join(netmhcpan_out.groupTuple())
-        .map { sample_id, peptides_csv, netchop_dirs, netmhcpan_files ->
+        .join(mhcflurry_out)
+        .join(mixmhcpred_out)
+        .map { sample_id, peptides_csv, netchop_dirs, netmhcpan_files, mhcflurry_file, mixmhcpred_file ->
             def expression_file = file("${params.expression_dir}/${sample_id}_kallisto_expressions.csv")
-            tuple(sample_id, peptides_csv, netchop_dirs, netmhcpan_files, expression_file)
+            tuple(sample_id, peptides_csv, netchop_dirs, netmhcpan_files, mhcflurry_file, mixmhcpred_file, expression_file)
         }
         | ADD_FINAL_SCORE
 }
