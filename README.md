@@ -1,6 +1,6 @@
 # Neoantigen Discovery Pipeline
 
-This Nextflow pipeline processes somatic mutations and ranks neoantigen candidates using peptide-MHC binding, NetChop cleavage scores, and expression-derived weighting.
+This Nextflow pipeline processes somatic mutations and ranks neoantigen candidates using peptide-MHC binding, NetChop cleavage scores and expression-derived weighting.
 
 ## Workflow
 
@@ -8,7 +8,7 @@ This Nextflow pipeline processes somatic mutations and ranks neoantigen candidat
 2. Generate mutation-overlapping 8-14mer peptides.
 3. Run NetChop per transcript FASTA.
 4. Split NetMHCpan work by HLA allele and peptide chunk.
-5. Combine NetChop, NetMHCpan, and expression data into one final scored candidate table.
+5. Combine NetChop, NetMHCpan and expression data into one final scored candidate table.
 
 The final published result is written to `output/`.
 
@@ -53,13 +53,13 @@ nextflow run main.nf \
 
 ## Requirements
 
-Install the Python dependencies with:
+Create the Python environment and install dependencies with uv:
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
-The pipeline also requires Nextflow and Docker. Download NetChop and NetMHCpan manually from (https://services.healthtech.dtu.dk/services/NetChop-3.1/) and (https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/) axxordingly, then place the downloaded archives in the Docker build directories:
+The pipeline also requires Nextflow and Docker. Download NetChop and NetMHCpan manually from (https://services.healthtech.dtu.dk/services/NetChop-3.1/) and (https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/) aссordingly, then place the downloaded archives in the Docker build directories:
 
 ```text
 docker/netchop/netChop.tar.gz
